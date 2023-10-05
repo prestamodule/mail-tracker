@@ -64,13 +64,13 @@ class MailTrackerController extends Controller
         }
 
         // Parse the URL to check if the domain matches the one from the app
-        $parsedUrl = parse_url($url);
-        if (empty($parsedUrl) || empty($parsedUrl['host'])) {
+        $parsedUrlHost = parse_url($url, PHP_URL_HOST);
+        if (empty($parsedUrlHost)) {
             throw new BadUrlLink('Mail hash: '.$hash.', URL: '.$url);
         }
         // If the domain mismatches, we could be in the case of someone attempting to redirect to a malicious website
         // through our app
-        if (env('APP_DOMAIN') != $parsedUrl['host']) {
+        if (env('APP_DOMAIN') != $parsedUrlHost) {
             abort(403);
             return;
         }
