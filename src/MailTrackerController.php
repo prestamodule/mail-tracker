@@ -45,9 +45,7 @@ class MailTrackerController extends Controller
     public function getL($url, $hash)
     {
         $url = base64_decode(str_replace("$", "/", $url));
-        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-            throw new BadUrlLink('Mail hash: '.$hash.', URL: '.$url);
-        }
+
         return $this->linkClicked($url, $hash);
     }
 
@@ -60,6 +58,11 @@ class MailTrackerController extends Controller
 
     protected function linkClicked($url, $hash)
     {
+        // Check if the URL is valid at first
+        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+            throw new BadUrlLink('Mail hash: '.$hash.', URL: '.$url);
+        }
+
         if (!$url) {
             $url = config('mail-tracker.redirect-missing-links-to') ?: '/';
         }
