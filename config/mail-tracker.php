@@ -87,4 +87,12 @@ return [
      * Size limit for content length stored in database
      */
     'content-max-size' => 65535,
+
+    /**
+     * The list of "from" emails we must track. Any email sent with a "from" email not present in this list will not be
+     * tracked
+     */
+    'senders-to-track' => [
+        //
+    ],
 ];

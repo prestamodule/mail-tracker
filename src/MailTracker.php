@@ -182,11 +182,18 @@ class MailTracker
      */
     protected function createTrackers($message)
     {
+        $sendersToTrack = config('mail-tracker.senders-to-track', []);
+
         foreach ($message->getTo() as $toAddress) {
             $to_email = $toAddress->getAddress();
             $to_name = $toAddress->getName();
             foreach ($message->getFrom() as $fromAddress) {
                 $from_email = $fromAddress->getAddress();
+                if (!in_array($from_email, $sendersToTrack)) {
+                    // Sender is not in the "track" list, we can abort right away
+                    continue;
+                }
+
                 $from_name = $fromAddress->getName();
                 $headers = $message->getHeaders();
                 if ($headers->get('X-No-Track')) {
