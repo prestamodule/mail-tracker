@@ -95,4 +95,11 @@ return [
     'senders-to-track' => [
         //
     ],
+
+    /**
+     * The list of allowed domains to allow when receiving a tracked link, preventing malicious usage of these links
+     */
+    'allowed-domains' => [
+        env('APP_DOMAIN'),
+    ],
 ];

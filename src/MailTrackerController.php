@@ -70,7 +70,7 @@ class MailTrackerController extends Controller
         }
         // If the domain mismatches, we could be in the case of someone attempting to redirect to a malicious website
         // through our app
-        if (env('APP_DOMAIN') != $parsedUrlHost) {
+        if (!in_array($parsedUrlHost, config('mail-tracker.allowed-domains'))) {
             abort(403);
             return;
         }
