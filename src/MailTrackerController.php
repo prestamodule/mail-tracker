@@ -2,17 +2,17 @@
 
 namespace jdavidbakr\MailTracker;
 
-use App\Http\Requests;
 use Event;
-use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
-
+use Response;
+use App\Http\Requests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use jdavidbakr\MailTracker\Events\LinkClickedEvent;
-use jdavidbakr\MailTracker\Exceptions\BadUrlLink;
-use jdavidbakr\MailTracker\RecordLinkClickJob;
+use Illuminate\Support\Facades\Log;
 use jdavidbakr\MailTracker\RecordTrackingJob;
-use Response;
+use jdavidbakr\MailTracker\RecordLinkClickJob;
+use jdavidbakr\MailTracker\Exceptions\BadUrlLink;
+use jdavidbakr\MailTracker\Events\LinkClickedEvent;
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
 
 class MailTrackerController extends Controller
 {
@@ -60,13 +60,17 @@ class MailTrackerController extends Controller
     {
         // Check if the URL is valid at first
         if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-            throw new BadUrlLink('Mail hash: '.$hash.', URL: '.$url);
+            Log::error('Invalid URL. Mail hash: '.$hash.', URL: '.$url);
+            abort(404);
+            // throw new BadUrlLink('Mail hash: '.$hash.', URL: '.$url);
         }
 
         // Parse the URL to check if the domain matches the one from the app
         $parsedUrlHost = parse_url($url, PHP_URL_HOST);
         if (empty($parsedUrlHost)) {
-            throw new BadUrlLink('Mail hash: '.$hash.', URL: '.$url);
+            Log::error('Cannot parse URL. Mail hash: '.$hash.', URL: '.$url);
+            abort(404);
+            // throw new BadUrlLink('Mail hash: '.$hash.', URL: '.$url);
         }
         // If the domain mismatches, we could be in the case of someone attempting to redirect to a malicious website
         // through our app
